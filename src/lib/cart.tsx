@@ -56,9 +56,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const clear = useCallback(() => setQuantities({}), []);
 
   const value = useMemo<CartContextValue>(() => {
-    const lines: CartLine[] = MENU_ITEMS.filter((i) => (quantities[i.id] ?? 0) > 0).map(
-      (item) => ({ item, qty: quantities[item.id] })
-    );
+    const lines: CartLine[] = MENU_ITEMS.filter(
+      (i) => (quantities[i.id] ?? 0) > 0
+    ).map((item) => ({ item, qty: quantities[item.id] ?? 0 }));
     const itemCount = lines.reduce((sum, l) => sum + l.qty, 0);
     const subtotal = lines.reduce((sum, l) => sum + l.qty * l.item.price, 0);
     const gst = Math.round(subtotal * GST_RATE);
