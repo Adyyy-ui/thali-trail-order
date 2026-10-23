@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { submitOrder } from "@/lib/orders";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -42,7 +43,8 @@ function CheckoutPage() {
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [orderId, setOrderId] = useState<string | null>(null);
+  const [placing, setPlacing] = useState(false);
+  const [orderId, setOrderId] = useState<number | null>(null);
 
   if (orderId) {
     return (
@@ -52,7 +54,7 @@ function CheckoutPage() {
         </span>
         <h1 className="mt-6 font-display text-3xl text-gold-gradient">Order Placed!</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Order <span className="font-bold text-gold">#{orderId}</span> has been sent
+          Order <span className="font-bold text-gold">#DF-{orderId}</span> has been sent
           to the kitchen. Your food will arrive in about 25 minutes.
         </p>
         <p className="mt-4 rounded-xl border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
@@ -88,7 +90,7 @@ function CheckoutPage() {
     );
   }
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
     if (!name.trim()) {
       setError("Please enter your name so we know who to serve.");
       return;
@@ -98,8 +100,28 @@ function CheckoutPage() {
       return;
     }
     setError(null);
+    setPlacing(true);
+    const { orderId: newId, error: orderError } = await submitOrder({
+      customerName: name.trim(),
+      customerPhone: phone,
+      notes: notes.trim() || null,
+      items: cart.lines.map(({ item, qty }) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        qty,
+      })),
+      subtotal: cart.subtotal,
+      gst: cart.gst,
+      total: cart.total,
+    });
+    setPlacing(false);
+    if (orderError || newId === null) {
+      setError(orderError ?? "Could not place your order. Please try again.");
+      return;
+    }
     cart.clear();
-    setOrderId(String(Math.floor(1000 + Math.random() * 9000)));
+    setOrderId(newId);
   };
 
   return (
@@ -242,10 +264,11 @@ function CheckoutPage() {
         <Button
           type="button"
           size="lg"
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-gold py-6 text-base font-bold text-primary-foreground shadow-[0_10px_40px_-10px_color-mix(in_oklab,var(--gold)_60%,transparent)] hover:bg-gold-soft"
-          onClick={placeOrder}
+          disabled={placing}
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-gold py-6 text-base font-bold text-primary-foreground shadow-[0_10px_40px_-10px_color-mix(in_oklab,var(--gold)_60%,transparent)] hover:bg-gold-soft disabled:opacity-60"
+          onClick={() => void placeOrder()}
         >
-          Place Order · {formatINR(cart.total)}
+          {placing ? "Placing your order…" : `Place Order · ${formatINR(cart.total)}`}
           <ChevronRight className="h-5 w-5" />
         </Button>
         <p className="text-center text-xs text-muted-foreground">
