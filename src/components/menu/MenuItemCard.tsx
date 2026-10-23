@@ -6,9 +6,8 @@ import { Button } from "@/components/ui/button";
 import { QuantityStepper } from "./QuantityStepper";
 
 export function MenuItemCard({ item }: { item: MenuItem }) {
-  const qty = useCart((c) => c.qtyOf(item.id));
-  const add = useCart((c) => c.add);
-  const decrement = useCart((c) => c.decrement);
+  const { qtyOf, add, decrement } = useCart();
+  const qty = qtyOf(item.id);
 
   return (
     <article className="group overflow-hidden rounded-3xl border border-border/70 bg-card shadow-[0_10px_40px_-20px_rgba(0,0,0,0.8)] transition-transform duration-200 hover:-translate-y-0.5">
