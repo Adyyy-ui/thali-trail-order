@@ -14,7 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      orders: {
+        Row: {
+          created_at: string
+          customer_name: string
+          customer_phone: string
+          gst: number
+          id: number
+          items: Json
+          notes: string | null
+          payment_status: string
+          status: Database["public"]["Enums"]["order_status"]
+          subtotal: number
+          table_number: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_name: string
+          customer_phone: string
+          gst: number
+          id?: never
+          items: Json
+          notes?: string | null
+          payment_status?: string
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal: number
+          table_number?: number
+          total: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string
+          customer_phone?: string
+          gst?: number
+          id?: never
+          items?: Json
+          notes?: string | null
+          payment_status?: string
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal?: number
+          table_number?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +70,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      order_status:
+        | "new"
+        | "accepted"
+        | "preparing"
+        | "ready"
+        | "served"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +203,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      order_status: [
+        "new",
+        "accepted",
+        "preparing",
+        "ready",
+        "served",
+        "cancelled",
+      ],
+    },
   },
 } as const
