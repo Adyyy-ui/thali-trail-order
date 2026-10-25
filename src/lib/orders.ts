@@ -89,18 +89,18 @@ export function useNow(intervalMs = 30000): number {
 
 function mapOrder(row: Record<string, unknown>): Order {
   return {
-    id: Number(row.id),
-    tableNumber: Number(row.table_number),
-    customerName: String(row.customer_name),
-    customerPhone: String(row.customer_phone),
-    notes: (row.notes as string | null) ?? null,
-    items: (row.items as OrderItem[]) ?? [],
-    subtotal: Number(row.subtotal),
-    gst: Number(row.gst),
-    total: Number(row.total),
-    status: row.status as OrderStatus,
-    paymentStatus: String(row.payment_status),
-    createdAt: String(row.created_at),
+    id: Number(row["id"]),
+    tableNumber: Number(row["table_number"]),
+    customerName: String(row["customer_name"]),
+    customerPhone: String(row["customer_phone"]),
+    notes: (row["notes"] as string | null) ?? null,
+    items: (row["items"] as OrderItem[]) ?? [],
+    subtotal: Number(row["subtotal"]),
+    gst: Number(row["gst"]),
+    total: Number(row["total"]),
+    status: row["status"] as OrderStatus,
+    paymentStatus: String(row["payment_status"]),
+    createdAt: String(row["created_at"]),
   };
 }
 
@@ -123,7 +123,7 @@ export async function submitOrder(
       customer_name: input.customerName,
       customer_phone: input.customerPhone,
       notes: input.notes,
-      items: input.items,
+      items: JSON.parse(JSON.stringify(input.items)) as Json,
       subtotal: input.subtotal,
       gst: input.gst,
       total: input.total,
