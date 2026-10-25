@@ -8,6 +8,13 @@
       "when": 1792754111248,
       "tag": "0000_create_orders",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792935863107,
+      "tag": "0001_grant_orders_api_access",
+      "breakpoints": true
     }
   ]
 }
